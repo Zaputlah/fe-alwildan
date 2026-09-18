@@ -1,0 +1,342 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand: #167a72;
+  --color-brand-dark: #0e625c;
+  --color-brand-soft: #e8f5f2;
+  --color-navy: #0c2440;
+  --color-ink: #162536;
+  --color-muted: #687787;
+  --color-line: #e4e9ee;
+  --color-canvas: #f5f7f8;
+  --color-danger: #c84646;
+  --color-success: #21865f;
+  --font-sans: Inter, "Segoe UI", Arial, sans-serif;
+}
+
+@layer base {
+  * { @apply box-border; }
+  html, body { @apply m-0 min-h-full bg-canvas font-sans text-ink; }
+  button { @apply cursor-pointer; }
+  button, input, select, textarea { @apply font-sans; }
+  h1, h2, p { @apply mt-0; }
+  h1 { @apply mb-2 text-3xl font-bold tracking-tight md:text-4xl; }
+  h2 { @apply mb-1.5 text-xl font-bold tracking-tight; }
+  p { @apply leading-relaxed text-muted; }
+  input, select, textarea { @apply min-h-11 w-full rounded-lg border border-line bg-white px-3 text-ink outline-none transition focus:border-brand focus:ring-3 focus:ring-brand/10; }
+  textarea { @apply resize-y py-3; }
+}
+
+@layer components {
+  .brand { @apply flex items-center gap-3 text-sm font-bold tracking-tight; }
+  .brand--light { @apply text-white; }
+  .brand__mark { @apply grid size-10 place-items-center rounded-xl bg-brand text-xs font-extrabold text-white shadow-lg shadow-brand/25; }
+  .eyebrow { @apply mb-2 block text-[11px] font-extrabold uppercase tracking-[.14em] text-brand; }
+  .eyebrow--light { @apply text-teal-200; }
+  .muted { @apply text-muted; }
+
+  .btn { @apply inline-flex min-h-10 items-center justify-center rounded-lg border border-transparent px-4 font-bold transition disabled:cursor-not-allowed disabled:opacity-50; }
+  .btn--primary { @apply bg-brand text-white shadow-md shadow-brand/20 hover:-translate-y-px hover:bg-brand-dark; }
+  .btn--secondary { @apply border-line bg-white text-ink hover:border-slate-400 hover:bg-slate-50; }
+  .btn--ghost { @apply border-slate-200 bg-transparent text-muted; }
+  .btn--small { @apply min-h-9 px-3 text-xs; }
+  .btn--block { @apply min-h-12 w-full; }
+
+  .login-page { @apply grid min-h-screen grid-cols-1 bg-white md:grid-cols-[1.08fr_.92fr]; }
+  .login-visual { @apply relative hidden flex-col justify-between overflow-hidden bg-[radial-gradient(circle_at_85%_15%,#225170_0,transparent_38%),linear-gradient(145deg,#0a233e_0%,#0e3c50_100%)] px-[7vw] py-11 text-white md:flex; }
+  .login-copy { @apply relative z-10 my-auto max-w-2xl py-20; }
+  .login-copy h1 { @apply mb-5 max-w-xl text-5xl leading-[1.04] lg:text-7xl; }
+  .login-copy p { @apply max-w-lg text-lg text-slate-300; }
+  .feature-pills { @apply mt-8 flex flex-wrap gap-2; }
+  .feature-pills span { @apply rounded-full border border-white/15 bg-white/10 px-3 py-2 text-xs text-slate-200; }
+  .visual-orb { @apply absolute rounded-full border border-white/10; }
+  .visual-orb--one { @apply -right-44 -bottom-52 size-[480px]; box-shadow: inset 0 0 80px rgba(31,145,131,.12); }
+  .visual-orb--two { @apply -top-24 left-[45%] size-56; }
+  .login-panel { @apply grid min-h-screen place-items-center p-7 md:min-h-0 md:p-10; }
+  .login-card { @apply w-full max-w-lg; }
+  .login-card h2 { @apply mb-2 text-3xl; }
+  .login-card > label, .form-grid label { @apply my-4 flex flex-col gap-2 text-xs font-bold text-slate-700; }
+  .login-card .btn { @apply mt-2; }
+  .demo-toggle { @apply mt-7 flex w-full items-center justify-between rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-left text-xs transition hover:border-brand/50 hover:bg-emerald-50; }
+  .demo-toggle > span:first-child { @apply grid gap-1; }
+  .demo-toggle strong { @apply text-ink; }
+  .demo-toggle small { @apply text-[10px] text-muted; }
+  .demo-toggle__icon { @apply text-xl text-muted transition-transform; }
+  .demo-box { @apply mt-2 grid gap-2 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-xs text-muted; }
+  .demo-box strong { @apply text-ink; }
+  .demo-heading { @apply mb-1 flex items-center justify-between gap-3; }
+  .demo-heading small { @apply text-[10px] font-normal; }
+  .demo-account { @apply flex w-full items-center justify-between gap-3 rounded-lg border border-transparent bg-white px-3 py-2.5 text-left transition hover:border-brand/30 hover:bg-emerald-50; }
+  .demo-account > span { @apply grid gap-0.5; }
+  .demo-account small { @apply text-[10px] text-muted; }
+  .demo-account code { @apply text-right text-[10px] text-brand; }
+  .demo-divider { @apply relative my-1 border-t border-slate-200 text-center; }
+  .demo-divider span { @apply relative -top-2 bg-slate-50 px-2 text-[9px] uppercase tracking-wider; }
+  .demo-password { @apply mt-1 flex items-center justify-between rounded-lg bg-slate-200/60 px-3 py-2; }
+  .demo-password code { @apply font-bold text-ink; }
+  .demo-modal { @apply max-w-lg; }
+  .demo-modal .demo-box { @apply mt-4 border-0 bg-transparent p-0; }
+  .mobile-brand { @apply mb-11 flex md:hidden; }
+
+  .app-shell { @apply grid min-h-screen grid-cols-1 md:grid-cols-[246px_minmax(0,1fr)]; }
+  .sidebar { @apply fixed inset-y-0 left-0 z-20 flex w-[246px] -translate-x-full flex-col bg-gradient-to-b from-navy to-slate-950 p-5 transition-transform md:translate-x-0 md:p-7; }
+  .sidebar-open .sidebar { @apply translate-x-0; }
+  .sidebar .brand { @apply px-1.5 pb-9; }
+  .sidebar nav { @apply grid gap-1.5; }
+  .sidebar nav a { @apply flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-semibold text-slate-400 no-underline hover:bg-white/10 hover:text-white; }
+  .sidebar nav a.active { @apply bg-white/10 text-white; }
+  .nav-icon { @apply grid w-6 place-items-center text-lg; }
+  .sidebar-help { @apply mt-auto grid gap-1 rounded-xl border border-white/10 bg-white/5 p-4 text-xs text-white; }
+  .sidebar-help span, .sidebar-help small { @apply text-slate-400; }
+  .workspace { @apply min-w-0 md:col-start-2; }
+  .topbar { @apply flex min-h-[78px] items-center border-b border-line bg-white/95 px-4 md:px-10; }
+  .school-context { @apply hidden gap-1 md:grid; }
+  .school-context small, .account-copy small { @apply text-[10px] text-muted; }
+  .school-context strong { @apply text-sm; }
+  .account { @apply ml-auto flex items-center gap-3; }
+  .avatar, .student-avatar { @apply grid shrink-0 place-items-center rounded-full bg-brand-soft font-extrabold text-brand-dark; }
+  .avatar { @apply size-10 text-xs; }
+  .student-avatar { @apply size-9 text-[10px]; }
+  .account-copy { @apply mr-2 hidden gap-0.5 md:grid; }
+  .account-copy strong { @apply text-xs; }
+  .menu-button { @apply mr-2 border-0 bg-transparent text-2xl md:hidden; }
+  .sidebar-backdrop { @apply fixed inset-0 z-10 border-0 bg-black/40 md:hidden; }
+  .content { @apply px-4 py-6 pb-12 md:px-10 md:py-9 md:pb-16; }
+  .page-heading { @apply mb-7 flex flex-col items-start justify-between gap-5 md:flex-row md:items-end; }
+  .page-heading p { @apply mb-0; }
+  .period-chip { @apply self-start rounded-lg border border-line bg-white px-3 py-2 text-xs font-semibold text-muted; }
+
+  .panel, .stat-card, .assessment-card { @apply rounded-xl border border-line bg-white shadow-sm; }
+  .stat-grid { @apply grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4; }
+  .stat-card { @apply flex min-h-28 items-center gap-4 p-5; }
+  .stat-card div { @apply grid gap-1; }
+  .stat-card small { @apply text-xs font-semibold text-muted; }
+  .stat-card strong { @apply text-3xl tracking-tight; }
+  .stat-card div span { @apply text-[10px] text-muted; }
+  .stat-icon { @apply grid size-11 place-items-center rounded-xl text-xl; }
+  .stat-icon--blue { @apply bg-blue-50 text-blue-600; }
+  .stat-icon--purple { @apply bg-violet-50 text-violet-600; }
+  .stat-icon--orange { @apply bg-orange-50 text-orange-600; }
+  .stat-icon--green { @apply bg-brand-soft text-brand; }
+  .dashboard-grid { @apply mt-4 grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1.7fr)_minmax(280px,.8fr)]; }
+  .teacher-dashboard-grid { @apply mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2; }
+  .teacher-dashboard-panel { @apply p-6; }
+  .teacher-dashboard-panel:only-child { @apply lg:col-span-2; }
+  .teacher-dashboard-panel > p { @apply mt-4 mb-0 text-xs; }
+  .teacher-subject-row { @apply flex flex-wrap items-center justify-between gap-2 border-b border-line py-3 text-sm last:border-b-0; }
+  .teacher-subject-row span { @apply text-xs text-muted; }
+  .teacher-homeroom-list { @apply mt-4 flex flex-wrap gap-2; }
+  .teacher-today-panel { @apply mt-4 p-6; }
+  .teacher-today-panel .panel-heading { @apply flex flex-wrap items-start gap-3; }
+  .teacher-today-panel h2 { @apply mt-1; }
+  .schedule-toolbar { @apply mb-4 flex flex-wrap items-end gap-4 p-5; }
+  .schedule-toolbar label { @apply grid min-w-56 gap-1.5 text-xs font-bold text-slate-700; }
+  .schedule-timezone { @apply text-xs text-muted md:mb-3; }
+  .schedule-toolbar .btn { @apply md:ml-auto; }
+  .schedule-days { @apply grid gap-4 lg:grid-cols-2; }
+  .schedule-day { @apply overflow-hidden; }
+  .schedule-day--today { @apply border-brand/50; }
+  .schedule-day-heading { @apply flex items-center gap-3 border-b border-line px-5 py-4; }
+  .schedule-day-heading h2 { @apply m-0 text-lg; }
+  .schedule-day-heading small { @apply ml-auto text-xs text-muted; }
+  .schedule-today { @apply rounded-full bg-brand-soft px-2.5 py-1 text-[10px] font-bold text-brand-dark; }
+  .schedule-row { @apply flex flex-wrap items-center gap-4 border-b border-slate-100 px-5 py-4 last:border-b-0; }
+  .schedule-time { @apply min-w-28 text-sm text-brand-dark; }
+  .schedule-detail { @apply grid flex-1 gap-1; }
+  .schedule-detail strong { @apply text-sm; }
+  .schedule-detail span, .schedule-detail small { @apply text-xs text-muted; }
+  .schedule-actions { @apply flex; }
+  .schedule-empty { @apply m-0 px-5 py-7 text-sm text-muted; }
+  .schedule-calendar { @apply overflow-hidden; }
+  .schedule-calendar-header { @apply flex flex-wrap items-center justify-between gap-4 border-b border-line p-5; }
+  .schedule-calendar-header h2 { @apply mt-1 mb-1 capitalize; }
+  .schedule-calendar-header p { @apply m-0 text-xs; }
+  .schedule-calendar-navigation { @apply flex gap-2; }
+  .schedule-calendar-navigation .btn { @apply min-w-10; }
+  .schedule-calendar-navigation .btn:disabled { @apply cursor-not-allowed opacity-40; }
+  .schedule-calendar-scroll { @apply overflow-x-auto p-3; }
+  .schedule-calendar-grid { @apply grid min-w-[770px] grid-cols-7 gap-1; }
+  .schedule-calendar-weekdays { @apply mb-1 text-center text-xs font-bold text-muted; }
+  .schedule-calendar-weekdays span { @apply py-2; }
+  .schedule-calendar-date, .schedule-calendar-blank { @apply min-h-34 rounded-lg border border-line; }
+  .schedule-calendar-date { @apply flex flex-col gap-1.5 bg-white p-2 text-left transition-colors hover:border-brand/50 hover:bg-brand-soft/40 focus-visible:outline-2 focus-visible:outline-brand; }
+  .schedule-calendar-date--today { @apply border-brand/60 bg-brand-soft/40; }
+  .schedule-calendar-date--selected { @apply border-brand bg-brand-soft ring-2 ring-brand/20; }
+  .schedule-calendar-date--outside { @apply cursor-default bg-slate-50 text-slate-400; }
+  .schedule-calendar-blank { @apply border-transparent bg-slate-50/60; }
+  .schedule-calendar-number { @apply flex items-center justify-between font-bold; }
+  .schedule-calendar-number small { @apply text-[9px] font-semibold text-brand-dark; }
+  .schedule-calendar-event { @apply block w-full rounded-md bg-teal-50 px-1.5 py-1 text-[10px] leading-tight text-brand-dark; }
+  .schedule-calendar-event strong { @apply mr-1; }
+  .schedule-selected-day { @apply mt-4 overflow-hidden; }
+  .chart-panel, .progress-panel { @apply p-6; }
+  .panel-heading { @apply flex justify-between; }
+  .panel-heading p { @apply m-0 text-xs; }
+  .legend-dot { @apply text-[10px] text-muted; }
+  .legend-dot::before { content: ''; @apply mr-1.5 inline-block size-2 rounded-sm bg-brand; }
+  .bar-chart { @apply mt-5 flex h-64 items-end justify-around border-b border-line px-4 pt-5; background: repeating-linear-gradient(to bottom,transparent,transparent 54px,#edf0f2 55px); }
+  .bar-column { @apply grid h-full w-1/6 grid-rows-[18px_1fr_25px] items-end justify-items-center; }
+  .bar { @apply min-h-1 w-[70%] max-w-12 rounded-t-md bg-gradient-to-b from-teal-500 to-brand; }
+  .bar-value { @apply text-[10px] font-bold; }
+  .bar-column small { @apply pt-2 text-muted; }
+  .progress-panel { @apply flex flex-col; }
+  .progress-ring { @apply mx-auto my-6 grid size-40 place-items-center rounded-full; background: conic-gradient(var(--color-brand) var(--progress),#e8eeef 0); }
+  .progress-ring::before { content: ''; grid-area: 1/1; @apply size-28 rounded-full bg-white; }
+  .progress-ring div { grid-area: 1/1; @apply z-10 grid text-center; }
+  .progress-ring strong { @apply text-3xl; }
+  .progress-ring small { @apply text-muted; }
+  .progress-note { @apply grid grid-cols-2 gap-2 border-t border-line pt-4 text-xs; }
+  .progress-note span { @apply grid grid-cols-[auto_1fr_auto] items-center gap-1.5; }
+  .dot { @apply size-2 rounded-full; }.dot--green { @apply bg-brand; }.dot--gray { @apply bg-slate-300; }
+
+  .alert { @apply mb-5 rounded-lg px-4 py-3 text-xs; }
+  .alert--error { @apply border border-red-200 bg-red-50 text-red-700; }
+  .alert--success { @apply border border-emerald-200 bg-emerald-50 text-emerald-700; }
+  .loading-card { @apply rounded-xl border border-line bg-white p-8 text-muted; }
+  .table-panel { @apply overflow-hidden; }
+  .table-toolbar { @apply flex flex-wrap items-center gap-2 border-b border-line p-5; }
+  .student-filter { @apply grid min-w-44 gap-1 text-[10px] font-bold text-muted; }
+  .student-filter select { @apply min-h-10; }
+  .search-box { @apply relative w-full max-w-sm; }.search-box span { @apply absolute top-2.5 left-3 text-muted; }.search-box input { @apply pl-9; }
+  .table-count { @apply w-full text-xs text-muted md:ml-auto md:w-auto; }
+  .table-pagination { @apply flex items-center justify-end gap-3 border-t border-line p-4 text-xs text-muted; }
+  .reason-cell { @apply max-w-md min-w-56 whitespace-normal; }
+  .report-filters { @apply mb-5 grid grid-cols-1 gap-4 p-5 md:grid-cols-3; }
+  .report-filters label { @apply grid gap-2 text-xs font-bold text-slate-700; }
+  .report-header { @apply mb-4 flex flex-col justify-between gap-5 p-6 md:flex-row md:items-center; }
+  .report-header p { @apply mb-0 text-xs; }
+  .report-average { @apply grid gap-1 rounded-xl bg-brand-soft px-5 py-4 text-brand-dark; }
+  .report-average small, .report-average span { @apply text-xs; }
+  .report-average strong { @apply text-3xl; }
+  .report-explanation { @apply mb-5 text-xs; }
+  .report-subjects { @apply mt-5 grid gap-4; }
+  .table-scroll { @apply overflow-x-auto; }
+  table { @apply w-full border-collapse whitespace-nowrap; }
+  th { @apply bg-slate-50 px-5 py-3 text-left text-[10px] uppercase tracking-wider text-slate-500; }
+  td { @apply border-t border-slate-100 px-5 py-3.5 text-xs text-slate-600; }
+  .person-cell { @apply flex items-center gap-3 text-ink; }
+  .mono { @apply font-mono text-xs; }
+  .class-chip, .type-chip { @apply inline-flex rounded-md bg-slate-100 px-2.5 py-1 text-[10px] font-bold text-slate-600; }
+  .cell-main, .cell-sub { @apply block; }.cell-sub { @apply mt-1 text-[10px] text-muted; }
+  .actions { @apply text-right; }.icon-button { @apply ml-1 size-8 rounded-lg border border-line bg-white text-muted; }.icon-button--danger { @apply text-danger; }
+  .empty-state { @apply px-5! py-14! text-center text-muted; }
+
+  .assessment-grid { @apply grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3; }
+  .teacher-assessment-filters { @apply mb-4 grid grid-cols-1 gap-4 p-5 sm:grid-cols-2 xl:grid-cols-4; }
+  .teacher-assessment-tabs { @apply mb-4 flex flex-wrap gap-2 border-b border-line; }
+  .teacher-assessment-tabs button { @apply -mb-px border-x-0 border-t-0 border-b-2 border-transparent bg-transparent px-4 py-3 text-sm font-semibold text-muted hover:text-brand-dark; }
+  .teacher-assessment-tabs button.teacher-assessment-tab--active { @apply border-brand text-brand-dark; }
+  .assessment-section-intro { @apply mb-4; }
+  .assessment-section-intro h2 { @apply mb-1 text-xl; }
+  .assessment-section-intro p { @apply mb-0 text-sm text-muted; }
+  .teacher-assessment-notice { @apply mb-4 rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-800; }
+  .teacher-assessment-filters label { @apply grid gap-2 text-xs font-bold text-slate-700; }
+  .teacher-assessment-filters select { @apply min-h-11; }
+  .teacher-assessment-fixed-subject { @apply grid min-h-11 items-center gap-0.5 rounded-lg border border-brand/30 bg-brand-soft px-3 py-2 text-sm font-semibold text-brand-dark; }
+  .teacher-assessment-fixed-subject small { @apply text-[10px] font-normal text-muted; }
+  .teacher-assessment-summary { @apply mb-4 grid grid-cols-1 gap-4 sm:grid-cols-3; }
+  .teacher-assessment-stat { @apply flex min-h-28 items-center gap-4 p-5; }
+  .teacher-assessment-stat > div { @apply grid gap-0.5; }
+  .teacher-assessment-stat strong { @apply text-3xl leading-none; }
+  .teacher-assessment-stat span:not(.teacher-assessment-stat-icon) { @apply text-sm font-semibold text-slate-700; }
+  .teacher-assessment-stat small { @apply text-xs text-muted; }
+  .teacher-assessment-stat-icon { @apply grid size-11 shrink-0 place-items-center rounded-xl text-xl; }
+  .teacher-assessment-stat-icon--total { @apply bg-blue-50 text-blue-600; }
+  .teacher-assessment-stat-icon--missing { @apply bg-amber-50 text-amber-600; }
+  .teacher-assessment-stat-icon--draft { @apply bg-violet-50 text-violet-600; }
+  .teacher-assessment-actions { @apply mb-4 flex justify-end; }
+  .teacher-assessment-list { @apply overflow-hidden; }
+  .homeroom-roster { @apply mb-4 overflow-hidden; }
+  .homeroom-roster table { @apply min-w-[560px]; }
+  .homeroom-student-buttons { @apply flex flex-wrap gap-2 p-5; }
+  .homeroom-student-button--active { @apply border-brand bg-brand-soft text-brand-dark; }
+  .homeroom-report-summary { @apply my-5 grid gap-1 rounded-xl bg-brand-soft p-5 text-brand-dark; }
+  .homeroom-report-summary span, .homeroom-report-summary small { @apply text-xs; }
+  .homeroom-report-summary strong { @apply text-3xl; }
+  .teacher-assessment-list-header { @apply border-b border-line p-5; }
+  .teacher-assessment-list-header h2 { @apply mb-1; }
+  .teacher-assessment-list-header p { @apply mb-0 text-xs; }
+  .teacher-assessment-list table { @apply min-w-[720px]; }
+  .teacher-assessment-list td { @apply py-4; }
+  .teacher-assessment-list .type-chip { @apply bg-slate-100; }
+  .teacher-assessment-title { @apply text-sm text-ink; }
+  .assessment-card { @apply p-5; }.assessment-card h2 { @apply mt-5; }.assessment-card > p { @apply text-xs; }
+  .assessment-top, .assessment-footer { @apply flex items-center justify-between; }
+  .status { @apply text-[10px] font-bold text-amber-700; }.status::before { content: ''; @apply mr-1.5 inline-block size-1.5 rounded-full bg-amber-500; }.status--published { @apply text-success; }.status--published::before { @apply bg-success; }
+  .assessment-meta { @apply my-5 grid grid-cols-3 gap-2 border-y border-line py-4; }.assessment-meta span { @apply grid gap-1; }.assessment-meta small { @apply text-[9px] text-muted; }.assessment-meta strong { @apply text-xs; }
+  .teacher-name { @apply overflow-hidden text-ellipsis whitespace-nowrap text-[10px] text-muted; }
+
+  .master-grid { @apply grid grid-cols-1 gap-4 lg:grid-cols-2; }
+  .master-panel { @apply overflow-hidden; }.master-panel--wide { @apply lg:col-span-2; }
+  .master-heading { @apply items-center border-b border-line p-5; }.master-heading p { @apply m-0 text-xs; }
+  .master-list { @apply grid; }
+  .master-item { @apply grid min-h-18 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border-b border-slate-100 px-5 py-3 last:border-b-0; }
+  .master-item > div:not(.master-actions) { @apply grid min-w-0 gap-1; }.master-item strong { @apply overflow-hidden text-ellipsis whitespace-nowrap text-sm; }.master-item small { @apply text-[10px] text-muted; }
+  .master-symbol { @apply grid size-10 place-items-center rounded-xl bg-blue-50 text-sm font-extrabold text-blue-600; }.master-symbol--subject { @apply bg-brand-soft text-[10px] text-brand-dark; }.master-symbol--teacher { @apply bg-violet-50 text-[10px] text-violet-600; }
+  .master-actions { @apply flex; }
+
+  .attendance-hero { @apply mb-4 grid grid-cols-1 items-center gap-8 bg-gradient-to-br from-white to-teal-50 p-6 lg:grid-cols-[1fr_auto_auto]; }
+  .student-attendance-filters { @apply mb-4 grid grid-cols-1 gap-4 p-5 md:grid-cols-3; }
+  .student-attendance-filters label { @apply grid gap-2 text-xs font-bold text-slate-700; }
+  .student-attendance-summary { @apply mb-4 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-5; }
+  .student-attendance-stat { @apply grid gap-1 p-4; }
+  .student-attendance-stat small, .student-attendance-stat span { @apply text-xs text-muted; }
+  .student-attendance-stat strong { @apply text-3xl; }
+  .student-attendance-editor, .student-attendance-table { @apply mb-4 overflow-hidden; }
+  .student-attendance-editor .teacher-assessment-list-header { @apply flex flex-wrap items-end justify-between gap-3; }
+  .student-attendance-editor .teacher-assessment-list-header label { @apply grid gap-1 text-xs font-bold text-slate-700; }
+  .student-attendance-editor table { @apply min-w-[850px]; }
+  .student-attendance-editor select, .student-attendance-editor td input { @apply min-h-10; }
+  .student-attendance-table table { @apply min-w-[700px]; }
+  .student-attendance-save { @apply flex justify-end border-t border-line p-4; }
+  .student-attendance-history { @apply mb-4 overflow-hidden; }
+  .student-attendance-history-toolbar { @apply flex flex-wrap items-end gap-3 px-5 pt-4 pb-2; }
+  .student-attendance-history-toolbar label { @apply grid min-w-48 flex-1 gap-1.5 text-xs font-bold text-slate-700 md:max-w-72; }
+  .student-attendance-history-toolbar input, .student-attendance-history-toolbar select { @apply min-h-10; }
+  .student-attendance-history-count { @apply mb-0 px-5 pb-4 text-xs text-muted; }
+  .student-attendance-history-day { @apply border-t border-line; }
+  .student-attendance-history-day summary { @apply flex cursor-pointer list-none flex-wrap items-center gap-3 px-5 py-4 hover:bg-slate-50; }
+  .student-attendance-history-day summary::-webkit-details-marker { display: none; }
+  .student-attendance-history-day[open] summary { @apply bg-slate-50; }
+  .student-attendance-history-date { @apply grid min-w-48 gap-1; }
+  .student-attendance-history-date strong { @apply text-sm capitalize text-ink; }
+  .student-attendance-history-date small { @apply text-xs text-muted; }
+  .student-attendance-history-chips { @apply flex flex-1 flex-wrap gap-1.5; }
+  .student-attendance-history-chevron { @apply ml-auto text-xl text-muted transition-transform; }
+  .student-attendance-history-day[open] .student-attendance-history-chevron { @apply rotate-180; }
+  .student-attendance-history-day table { @apply min-w-[650px]; }
+  .behavior-editor { @apply mb-4 overflow-hidden; }
+  .behavior-form-grid { @apply grid grid-cols-1 gap-4 p-5 md:grid-cols-3; }
+  .behavior-form-grid label { @apply grid gap-2 text-xs font-bold text-slate-700; }
+  .behavior-form-grid .behavior-notes { @apply md:col-span-3; }
+  .behavior-form-grid textarea { @apply min-h-24 resize-y rounded-lg border border-line px-3 py-2 text-sm font-normal; }
+  .live-clock { @apply block text-4xl font-bold tracking-tight md:text-5xl; }.attendance-hero p { @apply mt-1 mb-0 text-xs; }
+  .today-state { @apply min-w-48 border-t border-line pt-4 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-6; }
+  .today-times { @apply mt-3 flex gap-7; }.today-times span { @apply grid gap-1; }.today-times small { @apply text-[9px] text-muted; }.today-times strong { @apply text-base; }
+  .attendance-actions { @apply flex flex-wrap gap-2; }
+  .attendance-filters { @apply mb-4 flex flex-col items-stretch gap-3 p-4 md:flex-row md:items-end; }.attendance-filters label { @apply grid w-full gap-1.5 text-[10px] font-bold text-muted md:w-auto md:min-w-48; }.attendance-filters input, .attendance-filters select { @apply min-h-10; }
+  .attendance-summary { @apply mb-4 grid grid-cols-2 gap-3 lg:grid-cols-3 xl:grid-cols-5; }
+  .attendance-stat { @apply flex items-center gap-3 p-4 text-left transition-colors hover:border-brand/50 hover:bg-sky-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand; }.attendance-stat--active { @apply border-brand bg-sky-50 ring-2 ring-brand/20; }.attendance-stat div { @apply grid gap-1; }.attendance-stat small { @apply text-[9px] text-muted; }.attendance-stat strong { @apply text-2xl; }
+  #attendance-history { @apply scroll-mt-6; }
+  .attendance-dot { @apply h-8 w-2 rounded-full bg-slate-400; }.attendance-dot--present { @apply bg-emerald-500; }.attendance-dot--late { @apply bg-amber-500; }.attendance-dot--sick { @apply bg-blue-500; }.attendance-dot--leave { @apply bg-violet-500; }.attendance-dot--duty { @apply bg-cyan-500; }.attendance-dot--absent { @apply bg-red-500; }.attendance-dot--pending { @apply bg-yellow-500; }.attendance-dot--rejected { @apply bg-rose-500; }.attendance-dot--early { @apply bg-orange-500; }
+  .attendance-location-hint { @apply mt-2 block text-[10px] text-muted; }
+  .attendance-locations, .attendance-notes { @apply grid gap-1 whitespace-normal; }
+  .attendance-locations a { @apply text-[10px] font-semibold text-brand underline; }
+  .attendance-early { @apply text-[10px] font-bold text-orange-700; }
+  .attendance-evidence-button { @apply mt-1 justify-self-start; }
+  .attendance-badge { @apply inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-[9px] font-extrabold text-slate-600; }.attendance-badge--present { @apply bg-emerald-50 text-emerald-700; }.attendance-badge--late { @apply bg-amber-50 text-amber-700; }.attendance-badge--sick { @apply bg-blue-50 text-blue-700; }.attendance-badge--leave { @apply bg-violet-50 text-violet-700; }.attendance-badge--duty { @apply bg-cyan-50 text-cyan-700; }.attendance-badge--absent { @apply bg-red-50 text-red-700; }
+  .attendance-approval { @apply inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-[9px] font-extrabold text-slate-600; }.attendance-approval--pending { @apply bg-yellow-50 text-yellow-800; }.attendance-approval--approved { @apply bg-emerald-50 text-emerald-700; }.attendance-approval--rejected { @apply bg-rose-50 text-rose-700; }
+  .attendance-review-note { @apply mt-1 block max-w-48 whitespace-normal text-[10px] text-rose-700; }
+
+  .modal-backdrop { @apply fixed inset-0 z-50 grid place-items-center overflow-y-auto bg-slate-950/60 p-3 backdrop-blur-sm md:p-7; }
+  .modal { @apply max-h-[calc(100vh-56px)] w-full max-w-2xl overflow-y-auto rounded-2xl border-0 bg-white p-6 shadow-2xl; }.modal--wide { @apply max-w-4xl; }
+  .modal-heading { @apply flex justify-between border-b border-line pb-4; }.modal-heading h2 { @apply mb-0; }.modal-heading p { @apply mt-1 mb-0 text-xs; }
+  .modal-close { @apply size-9 rounded-lg border-0 bg-slate-100 text-xl text-muted; }
+  .form-grid { @apply grid grid-cols-1 gap-x-4 py-1 md:grid-cols-2; }.form-grid label { @apply my-3; }.span-2 { @apply md:col-span-2; }
+  .modal-actions { @apply flex justify-end gap-2 border-t border-line pt-5; }
+  .score-list { @apply my-4; }.score-row { @apply grid grid-cols-[1.2fr_75px_1fr] items-center gap-3 border-b border-slate-100 px-2 py-2.5 md:grid-cols-[1.5fr_100px_1fr]; }.score-row input { @apply min-h-10; }.score-row--head { @apply text-[9px] font-extrabold uppercase tracking-wider text-muted; }
+  .score-import-toolbar { @apply my-4 flex flex-wrap items-center gap-2; }
+  .score-import-toolbar small { @apply w-full text-xs text-muted; }
+  .score-import-upload { @apply relative overflow-hidden; }
+  .score-import-upload input { @apply absolute inset-0 w-full cursor-pointer opacity-0; }
+}
