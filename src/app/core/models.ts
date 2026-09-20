@@ -1,10 +1,12 @@
 export type UserRole = 'ADMIN' | 'TEACHER';
+export type AdminScope = 'BRANCH' | 'CENTRAL';
 
 export interface CurrentUser {
   id: string;
   email: string;
   fullName: string;
   role: UserRole;
+  adminScope?: AdminScope;
   schoolUnit: { id: string; name: string; code?: string };
 }
 
@@ -128,7 +130,7 @@ export interface TeacherAttendanceRecord {
   checkOutLongitude: number | null;
   checkOutAccuracyMeters: number | null;
   status: TeacherAttendanceStatus;
-  approvalStatus: 'PENDING' | 'APPROVED' | 'REJECTED' | null;
+  approvalStatus: 'PENDING_BRANCH' | 'PENDING_CENTRAL' | 'APPROVED' | 'REJECTED' | null;
   reviewedAt: string | null;
   reviewNotes: string | null;
   notes: string | null;

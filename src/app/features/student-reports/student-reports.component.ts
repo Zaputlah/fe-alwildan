@@ -12,7 +12,7 @@ interface ReportAssessment {
 }
 interface ReportSubject {
   id: string; code: string; name: string; passingGrade: number;
-  average: number | null; meetsKkm: boolean | null; assessments: ReportAssessment[];
+  average: number | null; grade: string | null; meetsKkm: boolean | null; assessments: ReportAssessment[];
 }
 interface StudentReport {
   student: ReportStudent;
@@ -20,6 +20,9 @@ interface StudentReport {
   academicPeriod: ReferenceData['periods'][number];
   subjects: ReportSubject[];
   overallAverage: number | null;
+  overallGrade: string | null;
+  academicAverage: number | null;
+  attendance: { weight: number; totalRecords: number; attended: number; percentage: number | null };
 }
 
 @Component({
@@ -64,15 +67,16 @@ interface StudentReport {
     @else if (report(); as result) {
       <section class="panel report-header">
         <div><span class="eyebrow">Rekap per siswa</span><h2>{{ result.student.fullName }}{{ result.student.isActive ? '' : ' (nonaktif)' }}</h2><p>NIS {{ result.student.nis }} · Kelas {{ result.schoolClass.name }} · {{ academicPeriodLabel(result.academicPeriod) }}</p></div>
-        <div class="report-average"><small>Rerata mata pelajaran tersedia</small><strong>{{ formatScore(result.overallAverage) }}</strong><span>Bukan nilai rapor final</span></div>
+        <div class="report-average"><small>Nilai akhir sementara</small><strong>{{ formatScore(result.overallAverage) }} <small>{{ result.overallGrade }}</small></strong><span>Akademik 75% · Kehadiran 25%</span></div>
       </section>
       <p class="report-explanation">Hanya assessment yang sudah diterbitkan. Rerata per pelajaran = jumlah (nilai ÷ nilai maksimum × bobot) ÷ total bobot nilai yang tersedia; rerata keseluruhan adalah rata-rata sederhana antar pelajaran yang tampil.</p>
+      <section class="panel report-attendance-summary"><div><span class="eyebrow">Kehadiran siswa</span><h2>{{ formatScore(result.attendance.percentage) }}%</h2><p>{{ result.attendance.attended }} dari {{ result.attendance.totalRecords }} catatan hadir/terlambat · bobot {{ result.attendance.weight }}%</p></div><div><small>Rerata akademik</small><strong>{{ formatScore(result.academicAverage) }}</strong><p>Bobot akademik 75%</p></div></section>
       @if (result.subjects.length) {
         <section class="panel table-panel">
           <div class="panel-heading master-heading"><div><h2>Ringkasan mata pelajaran</h2><p>{{ result.subjects.length }} mata pelajaran dengan penilaian diterbitkan</p></div></div>
-          <div class="table-scroll"><table><thead><tr><th>Mata pelajaran</th><th>Penilaian</th><th>KKM</th><th>Rerata</th><th>Hasil sementara</th></tr></thead><tbody>
+          <div class="table-scroll"><table><thead><tr><th>Mata pelajaran</th><th>Penilaian</th><th>KKM</th><th>Rerata</th><th>Predikat</th><th>Hasil sementara</th></tr></thead><tbody>
             @for (subject of result.subjects; track subject.id) {
-              <tr><td><strong>{{ subject.name }}</strong></td><td>{{ subject.assessments.length }}</td><td>{{ subject.passingGrade }}</td><td><strong>{{ formatScore(subject.average) }}</strong></td><td>{{ subject.meetsKkm === null ? 'Belum ada nilai' : subject.meetsKkm ? 'Mencapai KKM' : 'Di bawah KKM' }}</td></tr>
+              <tr><td><strong>{{ subject.name }}</strong></td><td>{{ subject.assessments.length }}</td><td>{{ subject.passingGrade }}</td><td><strong>{{ formatScore(subject.average) }}</strong></td><td><strong>{{ subject.grade || '—' }}</strong></td><td>{{ subject.meetsKkm === null ? 'Belum ada nilai' : subject.meetsKkm ? 'Mencapai KKM' : 'Di bawah KKM' }}</td></tr>
             }
           </tbody></table></div>
         </section>

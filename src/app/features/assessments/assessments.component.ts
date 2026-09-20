@@ -8,9 +8,9 @@ import { Assessment, ReferenceData } from '../../core/models';
 import { errorMessage } from '../../core/security.interceptor';
 import { academicPeriodLabel, currentAcademicPeriod } from '../../core/academic-period';
 import { assessmentSummary, focusedSubjectId, teacherAssessments } from './assessment-view';
-import { parseScoreImport, scoreTemplateCsv } from './score-import';
 import { StudentBehaviorComponent } from './student-behavior.component';
 import { StudentAttendanceComponent } from '../student-attendance/student-attendance.component';
+import { weightForAssessment } from './assessment-weight';
 
 interface ScoreSheet {
   assessment: { id: string; title: string; maxScore: number; status: 'DRAFT' | 'PUBLISHED' };
@@ -90,7 +90,7 @@ interface ScoreSheet {
             <label>Semester<select formControlName="academicPeriodId" (change)="periodChanged()"><option value="">Pilih semester</option>@for (item of references()?.periods ?? []; track item.id) { <option [value]="item.id">{{ academicPeriodLabel(item) }}</option> }</select></label>
             <label>Kelas<select formControlName="schoolClassId" (change)="classChanged()"><option value="">Pilih kelas</option>@for (item of manageableClasses(); track item.id) { <option [value]="item.id">Kelas {{ item.name }}</option> }</select></label>
             <label>Mata pelajaran<select formControlName="subjectId"><option value="">Pilih pelajaran</option>@for (item of manageableSubjects(); track item.id) { <option [value]="item.id">{{ item.name }}</option> }</select></label>
-            <label>Bobot (%)<input type="number" min="1" max="100" formControlName="weight"></label>
+            <label>Bobot standar (%)<input type="number" readonly [value]="weightForAssessment(form.controls.type.value)"><small>Ditentukan otomatis berdasarkan jenis assessment.</small></label>
             <label>Nilai maksimum<input type="number" min="1" formControlName="maxScore"></label>
             <label class="span-2">Tanggal pelaksanaan<input type="datetime-local" formControlName="scheduledAt"></label>
           </div>
@@ -104,8 +104,6 @@ interface ScoreSheet {
         <section class="modal modal--wide" (click)="$event.stopPropagation()">
           <div class="modal-heading"><div><span class="eyebrow">Lembar nilai</span><h2>{{ sheet.assessment.title }}</h2><p>Nilai maksimum {{ sheet.assessment.maxScore }}</p></div><button class="modal-close" (click)="closeScores()">×</button></div>
           @if (sheet.assessment.status === 'DRAFT' && !scoreReadOnly()) {
-            <div class="score-import-toolbar"><button class="btn btn--secondary btn--small" (click)="downloadScoreTemplate()">Unduh template CSV</button><label class="btn btn--secondary btn--small score-import-upload">Unggah nilai CSV<input type="file" accept=".csv,text/csv" aria-label="Unggah nilai CSV" (change)="onScoreFileSelected($event)"></label><small>Isi NIS dan nilai di Excel, simpan sebagai CSV UTF-8, lalu periksa hasilnya sebelum menyimpan.</small></div>
-            @if (importMessage()) { <div class="alert alert--success">{{ importMessage() }}</div> }
           }
           @if (error()) { <div class="alert alert--error">{{ error() }}</div> }
           <div class="score-list">
@@ -125,6 +123,7 @@ export class AssessmentsComponent {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
   readonly isTeacher = computed(() => this.auth.user()?.role === 'TEACHER');
+  readonly weightForAssessment = weightForAssessment;
   readonly entryMode = signal<'grades' | 'behavior' | 'attendance'>('grades');
   readonly assessments = signal<Assessment[]>([]);
   readonly references = signal<ReferenceData | null>(null);
@@ -183,7 +182,6 @@ export class AssessmentsComponent {
   readonly showCreate = signal(false);
   readonly scoreSheet = signal<ScoreSheet | null>(null);
   readonly scoreReadOnly = signal(false);
-  readonly importMessage = signal('');
   readonly saving = signal(false);
   readonly error = signal('');
   readonly message = signal('');
@@ -292,7 +290,6 @@ export class AssessmentsComponent {
   }
   openScores(assessment: Assessment) {
     this.error.set('');
-    this.importMessage.set('');
     this.scoreReadOnly.set(this.isTeacher() && assessment.teacher.id !== this.auth.user()?.id);
     this.http.get<ScoreSheet>(`/api/v1/assessments/${assessment.id}/scores`).subscribe({
       next: (sheet) => {
@@ -304,39 +301,6 @@ export class AssessmentsComponent {
     });
   }
   closeScores() { this.scoreSheet.set(null); }
-  downloadScoreTemplate() {
-    const sheet = this.scoreSheet();
-    if (!sheet || sheet.assessment.status !== 'DRAFT' || this.scoreReadOnly()) return;
-    const blob = new Blob([scoreTemplateCsv(sheet.students)], { type: 'text/csv;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `nilai-${sheet.assessment.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'assessment'}.csv`;
-    link.click();
-    setTimeout(() => URL.revokeObjectURL(url), 0);
-  }
-  async onScoreFileSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    input.value = '';
-    const sheet = this.scoreSheet();
-    if (!file || !sheet || sheet.assessment.status !== 'DRAFT' || this.scoreReadOnly()) return;
-    this.error.set(''); this.importMessage.set('');
-    if (!file.name.toLowerCase().endsWith('.csv') || file.size > 1_000_000) {
-      this.error.set('Pilih berkas CSV UTF-8 maksimal 1 MB.');
-      return;
-    }
-    try {
-      const entries = parseScoreImport(await file.text(), sheet.students, sheet.assessment.maxScore);
-      for (const entry of entries) {
-        this.scoreValues[entry.studentId] = entry.value;
-        this.noteValues[entry.studentId] = entry.notes;
-      }
-      this.importMessage.set(`${entries.length} nilai berhasil dimuat. Periksa lalu klik Simpan draft atau Terbitkan nilai.`);
-    } catch (error) {
-      this.error.set(error instanceof Error ? error.message : 'CSV tidak dapat dibaca.');
-    }
-  }
   private scorePayload() {
     const sheet = this.scoreSheet()!;
     return sheet.students.filter((student) => this.scoreValues[student.id] !== null && this.scoreValues[student.id] !== undefined).map((student) => ({ studentId: student.id, value: Number(this.scoreValues[student.id]), notes: this.noteValues[student.id] || null }));

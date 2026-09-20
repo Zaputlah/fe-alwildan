@@ -60,7 +60,7 @@ type AttendanceCardKey = TeacherAttendanceStatus | 'PENDING' | 'REJECTED' | 'EAR
                 </div>
               </td>
               <td><div class="attendance-notes">@for (remark of record.remarks; track $index) { <span [class.attendance-early]="remark.startsWith('Pulang terlalu cepat')">{{ remark }}</span> }@if (record.evidence) { <button type="button" class="btn btn--secondary btn--small attendance-evidence-button" [disabled]="downloadingEvidenceId() === record.id" [title]="record.evidence.fileName" (click)="downloadEvidence(record)">{{ downloadingEvidenceId() === record.id ? 'Mengunduh...' : record.status === 'DUTY' ? 'Unduh surat tugas' : record.status === 'SICK' ? 'Unduh bukti sakit' : 'Unduh bukti izin' }}</button> }</div></td>
-              @if (isAdmin) { <td class="actions">@if (record.approvalStatus === 'PENDING') { <button class="btn btn--primary" [disabled]="loading()" (click)="reviewRequest(record, 'APPROVED')">Setujui</button><button class="btn btn--secondary" [disabled]="loading()" (click)="reviewRequest(record, 'REJECTED')">Tolak</button> } @else { <button class="icon-button" (click)="openRecord(record)" aria-label="Ubah absensi">✎</button><button class="icon-button icon-button--danger" (click)="remove(record)" aria-label="Hapus absensi">×</button> }</td> }
+              @if (isAdmin) { <td class="actions">@if ((record.approvalStatus === 'PENDING_BRANCH' && auth.user()?.adminScope !== 'CENTRAL') || (record.approvalStatus === 'PENDING_CENTRAL' && auth.user()?.adminScope === 'CENTRAL')) { <button class="btn btn--primary" [disabled]="loading()" (click)="reviewRequest(record, 'APPROVED')">{{ record.approvalStatus === 'PENDING_BRANCH' ? 'Setujui cabang' : 'Setujui pusat' }}</button><button class="btn btn--secondary" [disabled]="loading()" (click)="reviewRequest(record, 'REJECTED')">Tolak</button> } @else { <button class="icon-button" (click)="openRecord(record)" aria-label="Ubah absensi">✎</button><button class="icon-button icon-button--danger" (click)="remove(record)" aria-label="Hapus absensi">×</button> }</td> }
             </tr>
           } @empty { <tr><td [attr.colspan]="isAdmin ? 9 : 8" class="empty-state">{{ selectedCard() ? 'Tidak ada catatan untuk kategori ini pada periode terpilih.' : 'Belum ada catatan absensi pada periode ini.' }}</td></tr> }
         </tbody></table></div>
@@ -93,7 +93,7 @@ type AttendanceCardKey = TeacherAttendanceStatus | 'PENDING' | 'REJECTED' | 'EAR
 })
 export class TeacherAttendanceComponent {
   private readonly http = inject(HttpClient);
-  private readonly auth = inject(AuthService);
+  readonly auth = inject(AuthService);
   private readonly fb = inject(FormBuilder);
   readonly data = signal<TeacherAttendanceResponse | null>(null);
   readonly references = signal<ReferenceData | null>(null);
@@ -140,7 +140,7 @@ export class TeacherAttendanceComponent {
   changeTeacher(event: Event) { this.teacherId.set((event.target as HTMLSelectElement).value); this.load(); }
   statusLabel(status: TeacherAttendanceStatus) { return ({ PRESENT: 'Hadir', LATE: 'Terlambat', SICK: 'Sakit', LEAVE: 'Izin', DUTY: 'Tugas sekolah/dinas', ABSENT: 'Alpa' })[status]; }
   approvalLabel(status: TeacherAttendanceRecord['approvalStatus']) {
-    return ({ PENDING: 'Menunggu Admin', APPROVED: 'Disetujui', REJECTED: 'Ditolak', final: 'Final' })[status ?? 'final'];
+    return ({ PENDING_BRANCH: 'Menunggu Admin Cabang', PENDING_CENTRAL: 'Menunggu Admin Pusat', APPROVED: 'Disetujui', REJECTED: 'Ditolak', final: 'Final' })[status ?? 'final'];
   }
   summaryCards(data: TeacherAttendanceResponse): { status: AttendanceCardKey; label: string; value: number }[] {
     return [
@@ -162,10 +162,10 @@ export class TeacherAttendanceComponent {
   filteredRecords(records: TeacherAttendanceRecord[]) {
     const selected = this.selectedCard();
     if (!selected) return records;
-    if (selected === 'PENDING') return records.filter((record) => record.approvalStatus === 'PENDING');
+    if (selected === 'PENDING') return records.filter((record) => record.approvalStatus === 'PENDING_BRANCH' || record.approvalStatus === 'PENDING_CENTRAL');
     if (selected === 'REJECTED') return records.filter((record) => record.approvalStatus === 'REJECTED');
     if (selected === 'EARLY') return records.filter((record) => record.isEarlyCheckout);
-    return records.filter((record) => record.status === selected && record.approvalStatus !== 'PENDING' && record.approvalStatus !== 'REJECTED');
+    return records.filter((record) => record.status === selected && record.approvalStatus !== 'PENDING_BRANCH' && record.approvalStatus !== 'PENDING_CENTRAL' && record.approvalStatus !== 'REJECTED');
   }
   schoolTime(value: string | Date, withSeconds = false) {
     return new Intl.DateTimeFormat('id-ID', {

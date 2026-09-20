@@ -205,10 +205,17 @@
   .report-filters label { @apply grid gap-2 text-xs font-bold text-slate-700; }
   .report-header { @apply mb-4 flex flex-col justify-between gap-5 p-6 md:flex-row md:items-center; }
   .report-header p { @apply mb-0 text-xs; }
-  .report-average { @apply grid gap-1 rounded-xl bg-brand-soft px-5 py-4 text-brand-dark; }
+  .report-average { @apply grid min-w-56 gap-1 rounded-2xl border border-brand/10 bg-brand-soft px-6 py-5 text-brand-dark shadow-sm; }
   .report-average small, .report-average span { @apply text-xs; }
-  .report-average strong { @apply text-3xl; }
-  .report-explanation { @apply mb-5 text-xs; }
+  .report-average strong { @apply flex items-baseline gap-2 text-4xl font-extrabold tracking-tight; }
+  .report-average strong small { @apply rounded-full bg-white/70 px-2 py-1 text-base font-bold; }
+  .report-explanation { @apply mb-5 rounded-lg border border-line bg-slate-50 px-4 py-3 text-xs leading-5 text-muted; }
+  .report-attendance-summary { @apply mb-5 grid gap-5 p-6 md:grid-cols-[1fr_auto] md:items-center; }
+  .report-attendance-summary h2 { @apply mt-1 text-4xl font-extrabold tracking-tight text-brand-dark; }
+  .report-attendance-summary p { @apply mb-0 text-xs text-muted; }
+  .report-attendance-summary > div:last-child { @apply rounded-xl bg-slate-50 px-5 py-4 md:min-w-44; }
+  .report-attendance-summary > div:last-child small { @apply block text-xs text-muted; }
+  .report-attendance-summary > div:last-child strong { @apply mt-1 block text-2xl font-extrabold text-ink; }
   .report-subjects { @apply mt-5 grid gap-4; }
   .table-scroll { @apply overflow-x-auto; }
   table { @apply w-full border-collapse whitespace-nowrap; }
@@ -333,6 +340,9 @@
   .modal-heading { @apply flex justify-between border-b border-line pb-4; }.modal-heading h2 { @apply mb-0; }.modal-heading p { @apply mt-1 mb-0 text-xs; }
   .modal-close { @apply size-9 rounded-lg border-0 bg-slate-100 text-xl text-muted; }
   .form-grid { @apply grid grid-cols-1 gap-x-4 py-1 md:grid-cols-2; }.form-grid label { @apply my-3; }.span-2 { @apply md:col-span-2; }
+  .case-form-panel { @apply p-6; }.case-form { @apply max-w-5xl; }.case-form select, .case-form input, .case-form textarea { @apply rounded-xl border border-line bg-white px-4 py-3 text-sm font-medium outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-teal-200; }.case-form textarea { @apply min-h-28 resize-y; }.case-form-actions { @apply flex justify-end border-t border-line pt-4; }.case-form-panel .panel-heading { @apply mb-2; }
+  .case-history-panel { @apply mt-6; }.case-history-panel .panel-heading { @apply p-6 pb-4; }.case-empty-state { @apply py-10!; }
+  .account-summary { @apply flex items-center gap-3 border-0 bg-transparent p-0 text-left; }.account-summary:hover { @apply cursor-pointer; }.profile-backdrop { @apply fixed inset-0 z-50 flex items-start justify-end bg-slate-950/25 p-24; }.profile-modal { @apply w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl; }.profile-modal__header { @apply flex items-start justify-between border-b border-line pb-5; }.profile-modal__header h2 { @apply mt-2 text-xl font-extrabold text-ink; }.icon-button { @apply h-9 w-9 rounded-lg border-0 bg-slate-100 text-2xl leading-none text-muted hover:bg-slate-200; }.profile-details { @apply grid gap-4 py-5; }.profile-details div { @apply grid gap-1; }.profile-details span { @apply text-xs font-semibold uppercase tracking-wide text-muted; }.profile-details strong { @apply text-sm text-ink; }.profile-close { @apply w-full; }
   .modal-actions { @apply flex justify-end gap-2 border-t border-line pt-5; }
   .score-list { @apply my-4; }.score-row { @apply grid grid-cols-[1.2fr_75px_1fr] items-center gap-3 border-b border-slate-100 px-2 py-2.5 md:grid-cols-[1.5fr_100px_1fr]; }.score-row input { @apply min-h-10; }.score-row--head { @apply text-[9px] font-extrabold uppercase tracking-wider text-muted; }
   .score-import-toolbar { @apply my-4 flex flex-wrap items-center gap-2; }

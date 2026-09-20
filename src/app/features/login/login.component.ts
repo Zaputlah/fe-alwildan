@@ -52,6 +52,10 @@ import { errorMessage } from '../../core/security.interceptor';
                     <span><strong>Admin</strong><small>Administrator sekolah</small></span>
                     <code>admin&#64;integration.sch.id</code>
                   </button>
+                  <button type="button" class="demo-account" (click)="useAccount('admin.pusat@integration.sch.id')">
+                    <span><strong>Admin Pusat</strong><small>Approval akhir seluruh cabang</small></span>
+                    <code>admin.pusat&#64;integration.sch.id</code>
+                  </button>
                   <button type="button" class="demo-account" (click)="useAccount('guru@integration.sch.id')">
                     <span><strong>Wali kelas 7A</strong><small>Ahmad Fauzan · mengajar IPA</small></span>
                     <code>guru&#64;integration.sch.id</code>
