@@ -24,7 +24,7 @@ interface ScoreSheet {
     @if (isTeacher()) {
       <div class="page-heading"><div><span class="eyebrow">Input data siswa</span><h1>Penilaian Siswa</h1><p>Input nilai tugas dan ujian, perilaku, serta kehadiran siswa.</p></div></div>
     } @else {
-      <div class="page-heading"><div><span class="eyebrow">Input data siswa</span><h1>Penilaian Siswa</h1><p>Input nilai tugas dan ujian, perilaku, serta kehadiran siswa.</p></div>@if (entryMode() === 'grades') { <button class="btn btn--primary" (click)="openCreate()">+ Buat assessment</button> }</div>
+      <div class="page-heading"><div><span class="eyebrow">Monitoring akademik</span><h1>Penilaian Siswa</h1><p>Lihat assessment dan hasil nilai yang dikelola Guru.</p></div></div>
     }
     @if (message()) { <div class="alert alert--success">{{ message() }}</div> }
     @if (error()) { <div class="alert alert--error">{{ error() }}</div> }
@@ -52,6 +52,9 @@ interface ScoreSheet {
           }
         </label>
       </section>
+      @if (!teacherSubjects().length) {
+        <div class="alert alert--info">Belum ada mata pelajaran yang ditugaskan untuk Anda pada semester ini. Minta Admin Cabang menambahkan penugasan di <strong>Master Data → Penugasan guru</strong>.</div>
+      }
       <section class="teacher-assessment-summary" aria-label="Ringkasan penilaian">
         <article class="panel teacher-assessment-stat"><span class="teacher-assessment-stat-icon teacher-assessment-stat-icon--total">▣</span><div><strong>{{ teacherSummary().total }}</strong><span>Assessment</span><small>semester ini</small></div></article>
         <article class="panel teacher-assessment-stat"><span class="teacher-assessment-stat-icon teacher-assessment-stat-icon--missing">○</span><div><strong>{{ teacherSummary().missingScores }}</strong><span>Belum Dinilai</span><small>nilai siswa belum diisi</small></div></article>
@@ -74,7 +77,7 @@ interface ScoreSheet {
           <h2>{{ assessment.title }}</h2>
           <p>{{ assessment.subject.name }} · Kelas {{ assessment.schoolClass.name }} · {{ periodLabel(assessment.academicPeriodId) }}</p>
           <div class="assessment-meta"><span><small>Bobot</small><strong>{{ assessment.weight }}%</strong></span><span><small>Nilai masuk</small><strong>{{ assessment._count.scores }}</strong></span><span><small>Jadwal</small><strong>{{ assessment.scheduledAt ? (assessment.scheduledAt | date:'dd MMM') : '—' }}</strong></span></div>
-          <div class="assessment-footer"><span class="teacher-name">Oleh {{ assessment.teacher.fullName }}</span><button class="btn btn--secondary btn--small" (click)="openScores(assessment)">{{ assessment.status === 'PUBLISHED' ? 'Lihat nilai' : 'Input nilai' }}</button></div>
+          <div class="assessment-footer"><span class="teacher-name">Oleh {{ assessment.teacher.fullName }}</span><button class="btn btn--secondary btn--small" (click)="openScores(assessment)">{{ assessment.status === 'PUBLISHED' || !isTeacher() ? 'Lihat nilai' : 'Input nilai' }}</button></div>
         </article>
       } @empty { <div class="panel empty-state">Belum ada assessment.</div> }
     </section>
@@ -247,8 +250,10 @@ export class AssessmentsComponent {
   openCreate() {
     if (this.isTeacher()) {
       this.form.controls.academicPeriodId.setValue(this.selectedTeacherPeriodId());
-      this.form.controls.schoolClassId.setValue(this.classFilter());
-      this.form.controls.subjectId.setValue(this.classFilter() ? this.effectiveSubjectId() : '');
+      const assignedClasses = this.manageableClasses();
+      const selectedClassId = this.classFilter() || (assignedClasses.length === 1 ? assignedClasses[0].id : '');
+      this.form.controls.schoolClassId.setValue(selectedClassId);
+      this.form.controls.subjectId.setValue(selectedClassId ? (this.manageableSubjects()[0]?.id ?? '') : '');
     }
     this.showCreate.set(true);
   }
@@ -264,7 +269,10 @@ export class AssessmentsComponent {
     const period = reference?.periods.find((item) => item.id === periodId);
     if (!reference || !period) return [];
     if (this.auth.user()?.role === 'ADMIN') return reference.classes.filter((item) => item.academicYear === period.name);
-    const ids = new Set(reference.access.manageablePairs.filter((item) => item.academicPeriodId === periodId).map((item) => item.classId));
+    const teacherId = this.auth.user()?.id;
+    const ids = new Set(reference.teachingAssignments
+      .filter((item) => item.teacherId === teacherId && item.academicPeriodId === periodId)
+      .map((item) => item.classId));
     return reference.classes.filter((item) => item.academicYear === period.name && ids.has(item.id));
   }
   manageableSubjects() {
@@ -272,10 +280,17 @@ export class AssessmentsComponent {
     if (!reference || this.auth.user()?.role === 'ADMIN') return reference?.subjects ?? [];
     const classId = this.form.controls.schoolClassId.value;
     const periodId = this.form.controls.academicPeriodId.value;
-    const ids = new Set(reference.access.manageablePairs.filter((item) => item.classId === classId && item.academicPeriodId === periodId).map((item) => item.subjectId));
+    const teacherId = this.auth.user()?.id;
+    const ids = new Set(reference.teachingAssignments
+      .filter((item) => item.teacherId === teacherId && item.classId === classId && item.academicPeriodId === periodId)
+      .map((item) => item.subjectId));
     return reference.subjects.filter((item) => ids.has(item.id));
   }
-  classChanged() { this.form.controls.subjectId.setValue(''); }
+  classChanged() {
+    this.form.controls.subjectId.setValue('');
+    const subjects = this.manageableSubjects();
+    if (subjects.length === 1) this.form.controls.subjectId.setValue(subjects[0].id);
+  }
   periodChanged() { this.form.controls.schoolClassId.setValue(''); this.form.controls.subjectId.setValue(''); }
 
   create() {
@@ -290,7 +305,7 @@ export class AssessmentsComponent {
   }
   openScores(assessment: Assessment) {
     this.error.set('');
-    this.scoreReadOnly.set(this.isTeacher() && assessment.teacher.id !== this.auth.user()?.id);
+    this.scoreReadOnly.set(this.auth.user()?.role === 'ADMIN' || (this.isTeacher() && assessment.teacher.id !== this.auth.user()?.id));
     this.http.get<ScoreSheet>(`/api/v1/assessments/${assessment.id}/scores`).subscribe({
       next: (sheet) => {
         this.scoreValues = Object.fromEntries(sheet.students.map((student) => [student.id, student.score]));

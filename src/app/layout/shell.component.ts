@@ -29,13 +29,14 @@ import { AuthService } from '../core/auth.service';
           <div class="school-context"><small>Unit sekolah</small><strong>{{ auth.user()?.schoolUnit?.name }}</strong></div>
           <div class="account">
             <button class="account-summary" type="button" (click)="profileOpen.set(true)" aria-label="Buka profil pengguna"><div class="avatar">{{ initials }}</div><div class="account-copy"><strong>{{ auth.user()?.fullName }}</strong><small>{{ auth.user()?.role === 'ADMIN' ? 'Administrator' : 'Guru' }}</small></div></button>
-            <button class="btn btn--ghost btn--small" (click)="auth.logout()">Keluar</button>
+            <button class="btn btn--ghost btn--small" (click)="logoutConfirmOpen.set(true)">Keluar</button>
           </div>
         </header>
         <main class="content"><router-outlet /></main>
       </section>
       @if (menuOpen()) { <button class="sidebar-backdrop" (click)="menuOpen.set(false)" aria-label="Tutup menu"></button> }
       @if (profileOpen()) { <div class="profile-backdrop" (click)="profileOpen.set(false)"><section class="profile-modal" role="dialog" aria-modal="true" aria-labelledby="profile-title" (click)="$event.stopPropagation()"><div class="profile-modal__header"><div><span class="eyebrow">Profil akun</span><h2 id="profile-title">{{ auth.user()?.fullName }}</h2></div><button class="icon-button" type="button" (click)="profileOpen.set(false)" aria-label="Tutup profil">×</button></div><div class="profile-details"><div><span>Nama lengkap</span><strong>{{ auth.user()?.fullName }}</strong></div><div><span>Email sekolah</span><strong>{{ auth.user()?.email }}</strong></div><div><span>Peran</span><strong>{{ auth.user()?.role === 'ADMIN' ? 'Administrator' : 'Guru' }}</strong></div><div><span>Unit sekolah</span><strong>{{ auth.user()?.schoolUnit?.name }}</strong></div>@if (auth.user()?.role === 'ADMIN') { <div><span>Lingkup akses</span><strong>{{ auth.user()?.adminScope === 'CENTRAL' ? 'Admin Pusat' : 'Admin Cabang' }}</strong></div> }</div><button class="btn btn--secondary profile-close" type="button" (click)="profileOpen.set(false)">Tutup</button></section></div> }
+      @if (logoutConfirmOpen()) { <div class="logout-backdrop" (click)="logoutConfirmOpen.set(false)"><section class="logout-modal" role="dialog" aria-modal="true" aria-labelledby="logout-title" (click)="$event.stopPropagation()"><h2 id="logout-title">Keluar dari sistem?</h2><p>Anda perlu login kembali untuk masuk.</p><div class="logout-actions"><button class="btn btn--secondary" type="button" (click)="logoutConfirmOpen.set(false)">Batal</button><button class="btn btn--primary" type="button" (click)="logout()">Keluar</button></div></section></div> }
     </div>
   `,
 })
@@ -43,6 +44,8 @@ export class ShellComponent {
   readonly auth = inject(AuthService);
   readonly menuOpen = signal(false);
   readonly profileOpen = signal(false);
+  readonly logoutConfirmOpen = signal(false);
+  logout() { this.logoutConfirmOpen.set(false); this.auth.logout(); }
   get initials() {
     return (this.auth.user()?.fullName ?? 'US').split(' ').slice(0, 2).map((part) => part[0]).join('').toUpperCase();
   }
